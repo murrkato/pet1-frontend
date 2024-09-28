@@ -1,0 +1,11 @@
+small {
+  display: none;
+}
+
+input:invalid[focused=true] {
+  border: 1px solid #e02b2b;
+}
+
+input:invalid[focused=true] ~ small {
+  display: block;
+}

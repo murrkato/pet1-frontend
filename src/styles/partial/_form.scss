@@ -1,0 +1,32 @@
+.f-field-row {
+  margin-bottom: 7px;
+}
+
+.form,
+.f-field-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.input,
+.textarea {
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #CED4DA;
+  background-color: transparent;
+  outline: none;
+
+  &:hover,
+  &:focus,
+  &:active {
+    border-color: $border;
+  }
+}
+
+.error {
+  margin-top: 3px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #e02b2b;
+}

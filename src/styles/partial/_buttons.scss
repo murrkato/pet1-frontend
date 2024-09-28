@@ -1,0 +1,20 @@
+@import './../base/mixins';
+
+.btn-prim {
+  @include button-reset;
+  padding: 11px;
+  background-color: $btn-prim;
+  border-radius: 6px;
+  transition: .3s all ease;
+
+  .text {
+    font-size: 14px;
+    color: #000;
+  }
+
+  &:hover,
+  &:active,
+  &:focus {
+    opacity: 0.9;
+  }
+}
