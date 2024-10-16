@@ -1,37 +1,24 @@
 import { useState } from 'react';
-import styles from './Register.module.scss';
 import FormInput from '../../components/FormInput/FormInput';
 import authService from '../../services/authService';
 import { useNavigate, Link } from 'react-router-dom';
 
-const Register = () => {
-  // const [username, setUserName] = useState('');
-  // const [email, setEmail] = useState('');
-  // const [password, setPassword] = useState('');
-  // const [confirmedPass, setConfirmedPass] = useState('');
-  // const [errors, setErrors] = useState({});
+const Login = () => {
   const navigate = useNavigate();
 
   const [values, setValues] = useState({
-    username: '',
     email: '',
     password: '',
-    confirmedPass: ''
   });
+
+  const validationPatterns = {
+    email: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+    password: /^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$/
+  }
 
   const inputs = [
     {
       id: 1,
-      type: 'text',
-      name: 'username',
-      placeholder: 'Username',
-      errorMessage: 'Username should be 3-16 characters and shouldn\'t include any special character',
-      autoComplete: '',
-      pattern: "^[A-Za-z0-9]{3,16}$",
-      required: true
-    },
-    {
-      id: 2,
       type: 'email',
       name: 'email',
       placeholder: 'Email',
@@ -40,50 +27,51 @@ const Register = () => {
       required: true
     },
     {
-      id: 3,
+      id: 2,
       type: 'password',
       name: 'password',
       placeholder: 'Password',
-      note: 'Password should be 8-20 characters and include at least 1 letter, 1 number and 1 special character',
-      errorMessage: 'Password should be 8-20 characters and include at least 1 letter, 1 number and 1 special character',
-      pattern: `^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,20}$`,
-      autoComplete: 'new-password',
-      required: true
-    },
-    {
-      id: 4,
-      type: 'password',
-      name: 'confirmedPass',
-      placeholder: 'Confirmed Password',
-      errorMessage: 'Passwords don\'t match',
-      pattern: values.password,
+      errorMessage: 'Enter password',
       autoComplete: 'new-password',
       required: true
     }
   ];
 
-  const validateForm = () => {
-    
+  const validateForm = (values) => {
+    const isFilled = values && Object.keys(values)?.length;
+    let valid = false;
+
+    if (isFilled) {
+      let isFieldsValid = {
+        email: false,
+        password: false
+      }
+
+      isFieldsValid.email = validationPatterns.email.test(values.email);
+      isFieldsValid.password = validationPatterns.password.test(values.password);
+
+      valid = Object.values(isFieldsValid).every(v => v);
+
+      return valid;
+    }
+
+    return valid;
   }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // let data = new FormData(e.target);
-    // console.log('qq', Object.fromEntries(data.entries()));
 
-    //TODO: add validation
-    let isValid = true;
+    let isValid = validateForm(values);
 
     if (isValid) {
-      let userData = {...values};
-      delete userData.confirmedPass;
-
-      console.log('userData', userData);
-
-      authService.register(userData)
+      authService.login(values)
         .then((resp) => {
-          navigate('/login');
-          console.log('registered', resp);
+          const result = resp?.data;
+
+          if (result?.data?.accessToken) {
+            localStorage.setItem('pet1-token', result.data.accessToken);
+            navigate('/home');
+          }
         })
         .catch((error) => {
           console.log('error', error);
@@ -100,11 +88,9 @@ const Register = () => {
       <div className="container-fluid d-column auth-main-container">
         <div className="row">
           <div className="col centered-col g-0">
-            {/* <div className={`${styles['auth-form']} d-column`}> */}
             <div className="auth-form d-column">
               <div>
-                <h1 className='h-main'>Register</h1>
-                <h3 className='h-main-3'>To get started, fill out the registration form below</h3>
+                <h1 className='h-main'>Login</h1>
               </div>
               <div>
                 <form action="" className="form" onSubmit={handleSubmit}>
@@ -120,13 +106,13 @@ const Register = () => {
                   ))}
                   <div className="btn-container el-bottom-align">
                     <button type="submit" className="btn-prim w-100">
-                      <span className="text">Get started</span>
+                      <span className="text">Login</span>
                     </button>
                   </div>
                 </form>
                 <div className="sm-accent-text text-center mt-2 mb-2">
-                  Already have an account?&nbsp;
-                  <Link to="/login" className="simple-link">Login</Link>
+                  Don't have an account?&nbsp;
+                  <Link to="/" className="simple-link">Register</Link>
                 </div>
               </div>
             </div>
@@ -137,4 +123,4 @@ const Register = () => {
   )
 }
 
-export default Register;
+export default Login;

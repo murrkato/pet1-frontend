@@ -1,10 +1,12 @@
 import logo from './logo.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.scss';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import Register from './pages/Register/Register';
+import Login from './pages/Login/Login';
 import Home from './pages/Home/Home';
+import ProtectedRoutes from './utils/ProtectedRoutes';
 
 function App() {
   return (
@@ -12,8 +14,13 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Register />}></Route>
-          <Route path='/home' element={<Home />}></Route>
-          {/* <Route path='/login' element={<Login />}></Route> */}
+          <Route path='/login' element={<Login />}></Route>
+          
+          <Route element={<ProtectedRoutes/>}>
+            <Route path='/home' element={<Home />}></Route>
+          </Route>
+
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </>
